@@ -24,7 +24,6 @@ h1{
     color:#9147ff;
     text-shadow: 2px 2px 8px black;
     font-size: 2.5em;
-    margin-bottom: 30px;
 }
 
 /* MEMBER BOX */
@@ -35,12 +34,11 @@ h1{
     margin:15px auto;
     padding:20px;
     border-radius:15px;
-    width: 90%;
-    max-width: 500px; /* Kick pole width */
+    width:320px;
     transition: 0.3s;
 }
 .member:hover{
-    transform: scale(1.02);
+    transform: scale(1.03);
     border-color: #9147ff;
 }
 
@@ -50,7 +48,7 @@ h1{
 }
 
 .status-dot{
-    width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:8px;
+    width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:5px;
 }
 .offline-dot{ background:#666; }
 .live-dot{ background:#00ff88; animation: pulse 1.5s infinite; }
@@ -61,35 +59,29 @@ h1{
     100%{box-shadow: 0 0 0 0 rgba(0,255,136,0);}
 }
 
-a{ color:#9147ff; text-decoration:none; font-weight:bold; font-size:14px; }
+a{ color:#9147ff; text-decoration:none; font-weight:bold; }
 a:hover{ text-decoration:underline; }
 
-/* KICK EMBED PLAYER - EXACT KICK SIZE */
+/* KICK EMBED PLAYER - Kick pole same size */
 .player-container{
     width: 100%;
-    margin: 15px 0 0 0;
-    border-radius: 8px;
+    max-width: 480px; /* Kick player width pole */
+    margin: 20px auto;
+    border-radius: 12px;
     overflow: hidden;
-    border: 2px solid #00ff88;
-    aspect-ratio: 16 / 9; /* Kick pole same ratio */
+    border: 3px solid #00ff88;
+    box-shadow: 0 0 25px #00ff88;
 }
 .player-container iframe{
     width: 100%;
-    height: 100%;
+    height: 270px; /* 16:9 ratio - Kick pole */
     border: none;
-    display: block;
 }
 
 .rz7-logo{
-    width: 220px;
-    margin-top: 40px;
-    filter: drop-shadow(0 0 20px #9147ff);
-}
-
-.viewer-count{
-    font-size: 13px;
-    color: #aaa;
-    margin-top: 5px;
+    width: 200px;
+    margin-top: 30px;
+    filter: drop-shadow(0 0 15px #9147ff);
 }
 </style>
 </head>
@@ -99,7 +91,7 @@ a:hover{ text-decoration:underline; }
 <div id="members"></div>
 
 <!-- RZ7 LOGO -->
-<img src="https://i.imgur.com/xyz.png" class="rz7-logo" alt="RZ7">
+<img src="https://i.imgur.com/xyz.png" class="rz7-logo" alt="RZ7"> <!-- Logo link maattan -->
 
 <script>
 // IVIDE NINTE TEAM USERNAME IDU
@@ -109,9 +101,11 @@ const membersDiv = document.getElementById('members');
 
 async function checkLive() {
     membersDiv.innerHTML = '';
+    let anyLive = false;
 
     for (const username of rz7Members) {
         try {
+            // Kick API use cheyyunnu
             const res = await fetch(`https://kick.com/api/v2/channels/${username}`);
             const data = await res.json();
             
@@ -121,16 +115,16 @@ async function checkLive() {
 
             if (data.livestream) {
                 // LIVE AANU
+                anyLive = true;
                 memberClass += ' live';
                 const viewers = data.livestream.viewer_count;
-                statusHTML = `<span class="status-dot live-dot"></span> LIVE NOW`;
+                statusHTML = `<span class="status-dot live-dot"></span> LIVE NOW - ${viewers} viewers`;
                 
-                // KICK PLAYER EMBED - CORRECT HEIGHT WIDTH
+                // IVIDE EMBED PLAYER VARUM - Height Width Kick pole
                 playerHTML = `
                 <div class="player-container">
-                    <iframe src="https://player.kick.com/${username}" allowfullscreen frameborder="0"></iframe>
+                    <iframe src="https://player.kick.com/${username}" allowfullscreen></iframe>
                 </div>
-                <p class="viewer-count">${viewers} viewers</p>
                 `;
             } else {
                 // OFFLINE
@@ -139,22 +133,22 @@ async function checkLive() {
 
             membersDiv.innerHTML += `
                 <div class="${memberClass}">
-                    <h3 style="margin: 0 0 10px 0;">${username}</h3>
-                    <p style="margin: 0 0 10px 0;">${statusHTML}</p>
-                    ${playerHTML}
+                    <h3>${username}</h3>
+                    <p>${statusHTML}</p>
                     <a href="https://kick.com/${username}" target="_blank">Watch on Kick</a>
+                    ${playerHTML}
                 </div>
             `;
 
         } catch (e) {
-            membersDiv.innerHTML += `<div class="member"><h3>${username}</h3><p>Error loading</p></div>`;
+            membersDiv.innerHTML += `<div class="member"><h3>${username}</h3><p>Error</p></div>`;
         }
     }
 }
 
-// 15 sec ku oru thavana check cheyyum
+// 30 sec ku oru thavana check cheyyum
 checkLive();
-setInterval(checkLive, 15000);
+setInterval(checkLive, 30000);
 </script>
 
 </body>
