@@ -5,107 +5,96 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RZ7 Live Tracker</title>
 <style>
-body{
-    font-family: 'Segoe UI', Arial;
-    color:#fff;
-    text-align:center;
-    padding:20px;
-    margin:0;
-    background-image: url('bg.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    background-color: #000;
-}
+body{ font-family: 'Segoe UI', Arial; color:#fff; text-align:center; padding:20px; margin:0; background-image: url('bg.jpg'); background-size: cover; background-attachment: fixed; background-color: #000; }
 h1{ color:#9147ff; text-shadow: 2px 2px 8px black; font-size: 2.5em; margin-bottom: 20px; }
 .section-title{ text-align: left; font-size: 1.5em; margin: 30px 20px 15px 20px; font-weight: bold; }
 .section-title span{ color:#00ff88; }
-
-#members{ 
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 0 20px;
-}
-
-.member-card{
-    background: rgba(24, 24, 27, 0.9);
-    border-radius: 12px;
-    overflow: hidden;
-    text-align: left;
-    transition: 0.2s;
-    border: 2px solid #555;
-}
+#members{ display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 0 20px; }
+.member-card{ background: rgba(24, 24, 27, 0.9); border-radius: 12px; overflow: hidden; text-align: left; transition: 0.2s; border: 2px solid #555; }
 .member-card:hover{ transform: scale(1.03); border-color: #9147ff; }
 .member-card.live{ border-color: #00ff88; box-shadow: 0 0 15px #00ff88; }
-
-.thumbnail{ width: 100%; aspect-ratio: 16 / 9; background: #000; position: relative; }
+.thumbnail{ width: 100%; aspect-ratio: 16 / 9; background: #111; position: relative; display:flex; align-items:center; justify-content:center; }
+.thumbnail img{ width:100%; height:100%; object-fit:cover; }
 .thumbnail iframe{ width: 100%; height: 100%; border: none; }
-.live-badge{ position: absolute; top: 8px; left: 8px; background: red; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-.viewer-badge{ position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.7); padding: 3px 8px; border-radius: 4px; font-size: 12px; }
-
+.live-badge{ position: absolute; top: 8px; left: 8px; background: red; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; z-index:2; }
+.offline-badge{ position: absolute; top: 8px; left: 8px; background: #555; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; z-index:2; }
 .info{ padding: 12px; }
 .info h3{ margin: 0 0 5px 0; font-size: 16px; }
-.info p{ margin: 0; font-size: 13px; color: #aaa; }
-.info a{ color:#9147ff; text-decoration:none; font-size:13px; }
-
+.info p{ margin: 0 0 8px 0; font-size: 13px; color: #aaa; }
+.info a{ color:#9147ff; text-decoration:none; font-size:13px; font-weight:bold; }
 .rz7-logo{ width: 200px; margin-top: 40px; filter: drop-shadow(0 0 20px #9147ff); }
-.loading{ color:#aaa; padding:20px; }
 </style>
 </head>
 <body>
 
 <h1>RZ7 LIVE TIME</h1>
-<div class="section-title"><span>LIVE</span> RZ7 Members</div>
-<div id="members"><p class="loading">Loading members...</p></div>
+<div class="section-title"><span>RZ7</span> Members</div>
+<div id="members"><p style="color:#aaa;">Loading...</p></div>
 
-<!-- NINTE LOGO LINK IVIDE IDU -->
 <img src="https://i.imgur.com/xyz.png" class="rz7-logo" alt="RZ7">
 
 <script>
 const rz7Members = ["mack_gaming", "vegtamyron", "thalapathy-ftw", "nokiya_w"]; 
 const membersDiv = document.getElementById('members');
 
+function createCard(username, isLive, thumbnailUrl) {
+    let cardClass = 'member-card';
+    let badge = '<div class="offline-badge">Offline</div>';
+    let thumb = `<img src="${thumbnailUrl}" alt="${username}">`;
+    let status = 'Offline';
+
+    if(isLive){
+        cardClass += ' live';
+        badge = '<div class="live-badge">LIVE</div>';
+        thumb = `<iframe src="https://player.kick.com/${username}" allowfullscreen></iframe>`;
+        status = 'LIVE NOW';
+    }
+
+    return `
+    <div class="${cardClass}">
+        <div class="thumbnail">
+            ${badge}
+            ${thumb}
+        </div>
+        <div class="info">
+            <h3>${username}</h3>
+            <p>${status}</p>
+            <a href="https://kick.com/${username}" target="_blank">Watch on Kick →</a>
+        </div>
+    </div>
+    `;
+}
+
 async function checkLive() {
     membersDiv.innerHTML = '';
     
-    // API illathe direct check cheyyunna vazhi - iframe use cheyyum
     for (const username of rz7Members) {
-        // Oru temp iframe undaakki live ano nokkum
-        const tempFrame = document.createElement('iframe');
-        tempFrame.src = `https://kick.com/${username}`;
-        tempFrame.style.display = 'none';
-        document.body.appendChild(tempFrame);
-        
-        // 2 sec kazhinju check cheyyu - simple method
-        setTimeout(() => {
-            // Best method: player embed cheyyu. Error aanel offline
-            const cardHTML = `
-            <div class="member-card" id="card-${username}">
-                <div class="thumbnail">
-                    <iframe src="https://player.kick.com/${username}" allowfullscreen onerror="this.parentElement.innerHTML='<div style=display:flex;align-items:center;justify-content:center;height:100%;color:#666>Offline</div>'"></iframe>
-                </div>
-                <div class="info">
-                    <h3>${username}</h3>
-                    <p>Checking status...</p>
-                    <a href="https://kick.com/${username}" target="_blank">Watch on Kick</a>
-                </div>
-            </div>
-            `;
-            membersDiv.innerHTML += cardHTML;
-            
-            // Player load aayal live aanu
-            const frame = document.querySelector(`#card-${username} iframe`);
-            frame.onload = () => {
-                document.querySelector(`#card-${username}`).classList.add('live');
-                document.querySelector(`#card-${username} p`).innerText = "LIVE NOW";
-            }
-        }, 100);
+        // Kick profile pic thumbnail aayi use cheyyum
+        const profilePic = `https://files.kick.com/images/user/${username}/profile_image/conversions/${username}-profile.jpg`;
+        const bannerPic = `https://files.kick.com/images/channel/${username}/banner_image/conversions/${username}-banner.jpg`;
+
+        // 5 sec wait cheythu player test cheyyu
+        const testFrame = document.createElement('iframe');
+        testFrame.src = `https://player.kick.com/${username}`;
+        testFrame.style.display = 'none';
+        document.body.appendChild(testFrame);
+
+        let isLive = false;
+        await new Promise(resolve => setTimeout(() => {
+            // Player load aayal live
+            testFrame.onload = () => isLive = true;
+            testFrame.onerror = () => isLive = false;
+            setTimeout(() => {
+                document.body.removeChild(testFrame);
+                membersDiv.innerHTML += createCard(username, isLive, bannerPic || profilePic);
+                resolve();
+            }, 1500);
+        }, 100));
     }
 }
 
 checkLive();
-setInterval(checkLive, 30000); // 30 sec ku oru thavana refresh
+setInterval(checkLive, 30000);
 </script>
 
 </body>
