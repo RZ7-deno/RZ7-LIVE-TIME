@@ -6,7 +6,7 @@
 <title>RZ7 Live Tracker</title>
 <style>
 body{
-    font-family: Arial;
+    font-family: 'Segoe UI', Arial;
     color:#fff;
     text-align:center;
     padding:20px;
@@ -15,59 +15,112 @@ body{
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    background-repeat: no-repeat;
     background-color: #000;
 }
 h1{
     color:#9147ff;
     text-shadow: 2px 2px 8px black;
     font-size: 2.5em;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
-.member{
-    background: rgba(24, 24, 27, 0.85);
-    backdrop-filter: blur(8px);
-    border: 2px solid #555;
-    margin:15px auto;
-    padding:20px;
-    border-radius:15px;
-    width: 90%;
-    max-width: 500px;
-    transition: 0.3s;
+.section-title{
+    text-align: left;
+    font-size: 1.5em;
+    margin: 30px 20px 15px 20px;
+    font-weight: bold;
 }
-.member:hover{ transform: scale(1.02); border-color: #9147ff; }
-.live{
-    border: 2px solid #00ff88;
-    box-shadow: 0 0 20px #00ff88;
-    order: -1; /* Live aalukal mela varan */
+.section-title span{ color:#00ff88; }
+
+/* GRID LAYOUT - KICK POLE */
+#members{ 
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Mobile il 1, PC il 3-4 */
+    gap: 20px;
+    padding: 0 20px;
 }
-.status-dot{ width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:8px; }
-.offline-dot{ background:#666; }
-.live-dot{ background:#00ff88; animation: pulse 1.5s infinite; }
-@keyframes pulse{
-    0%{box-shadow: 0 0 0 0 rgba(0,255,136,0.7);}
-    70%{box-shadow: 0 0 0 10px rgba(0,255,136,0);}
-    100%{box-shadow: 0 0 0 0 rgba(0,255,136,0);}
-}
-a{ color:#9147ff; text-decoration:none; font-weight:bold; font-size:14px; }
-a:hover{ text-decoration:underline; }
-.player-container{
-    width: 100%;
-    margin: 15px 0 0 0;
-    border-radius: 8px;
+
+.member-card{
+    background: rgba(24, 24, 27, 0.9);
+    border-radius: 12px;
     overflow: hidden;
-    border: 2px solid #00ff88;
-    aspect-ratio: 16 / 9;
+    text-align: left;
+    transition: 0.2s;
+    border: 2px solid transparent;
 }
-.player-container iframe{ width: 100%; height: 100%; border: none; display: block; }
-.rz7-logo{ width: 220px; margin-top: 40px; filter: drop-shadow(0 0 20px #9147ff); }
-.viewer-count{ font-size: 13px; color: #aaa; margin-top: 5px; }
-#members{ display: flex; flex-direction: column; gap: 15px; } /* Gap set cheyyan */
+.member-card:hover{
+    transform: scale(1.03);
+    border-color: #9147ff;
+}
+.member-card.live{
+    border-color: #00ff88;
+    box-shadow: 0 0 15px #00ff88;
+}
+
+/* THUMBNAIL */
+.thumbnail{
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    position: relative;
+}
+.thumbnail iframe{
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+.live-badge{
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: red;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+.viewer-badge{
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background: rgba(0,0,0,0.7);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+/* INFO */
+.info{
+    padding: 12px;
+}
+.info h3{
+    margin: 0 0 5px 0;
+    font-size: 16px;
+}
+.info p{
+    margin: 0;
+    font-size: 13px;
+    color: #aaa;
+}
+.tags{
+    margin-top: 8px;
+    display: flex;
+    gap: 5px;
+}
+.tag{
+    background: #2d2d30;
+    padding: 3px 8px;
+    border-radius: 15px;
+    font-size: 11px;
+}
+
+.rz7-logo{ width: 200px; margin-top: 40px; filter: drop-shadow(0 0 20px #9147ff); }
 </style>
 </head>
 <body>
 
 <h1>RZ7 LIVE TIME</h1>
+
+<div class="section-title"><span>LIVE</span> RZ7 Members</div>
 <div id="members"></div>
 
 <img src="https://i.imgur.com/xyz.png" class="rz7-logo" alt="RZ7">
@@ -80,7 +133,6 @@ async function checkLive() {
     membersDiv.innerHTML = '';
     let allMembers = [];
 
-    // Ellarumude data eduthu array il akkum
     for (const username of rz7Members) {
         try {
             const res = await fetch(`https://kick.com/api/v2/channels/${username}`);
@@ -91,38 +143,37 @@ async function checkLive() {
         }
     }
 
-    // LIVE aalukal mela, OFFLINE aalukal thazhe akki sort cheyyu
+    // LIVE first, pinne viewer count kurava anusarichu
     allMembers.sort((a, b) => {
-        if (a.data?.livestream && !b.data?.livestream) return -1; // a live aanu
-        if (!a.data?.livestream && b.data?.livestream) return 1;  // b live aanu
-        return 0; // randum same
+        if (a.data?.livestream && !b.data?.livestream) return -1;
+        if (!a.data?.livestream && b.data?.livestream) return 1;
+        if (a.data?.livestream && b.data?.livestream) {
+            return b.data.livestream.viewer_count - a.data.livestream.viewer_count;
+        }
+        return 0;
     });
 
-    // Sort cheytha list display cheyyu
     for (const member of allMembers) {
         const username = member.username;
         const data = member.data;
         
-        let statusHTML = '';
-        let memberClass = 'member';
-        let playerHTML = '';
+        let cardHTML = '';
+        let cardClass = 'member-card';
+        let thumbHTML = `<div class="thumbnail" style="background:#222; display:flex; align-items:center; justify-content:center;">Offline</div>`;
 
         if (data?.livestream) {
-            memberClass += ' live';
+            cardClass += ' live';
             const viewers = data.livestream.viewer_count;
-            statusHTML = `<span class="status-dot live-dot"></span> LIVE NOW`;
+            const title = data.livestream.session_title || "Live Stream";
+            const category = data.livestream.category?.name || "Gaming";
             
-            playerHTML = `
-            <div class="player-container">
-                <iframe src="https://player.kick.com/${username}" allowfullscreen frameborder="0"></iframe>
+            thumbHTML = `
+            <div class="thumbnail">
+                <iframe src="https://player.kick.com/${username}" allowfullscreen></iframe>
+                <div class="live-badge">LIVE</div>
+                <div class="viewer-badge">${(viewers/1000).toFixed(1)}K watching</div>
             </div>
-            <p class="viewer-count">${viewers} viewers</p>
             `;
-        } else {
-            statusHTML = `<span class="status-dot offline-dot"></span> Offline`;
-        }
 
-        membersDiv.innerHTML += `
-            <div class="${memberClass}">
-                <h3 style="margin: 0 0 10px 0;">${username}</h3>
-                <p style="margin: 
+            cardHTML = `
+            <div class="${cardClass}">
