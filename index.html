@@ -3,33 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RZ7 Live Tracker</title>
+<title>RZ7 LIVE TIME</title>
 <style>
-body{ font-family: 'Segoe UI', Arial; color:#fff; text-align:center; padding:20px; margin:0; background-image: url('bg.jpg'); background-size: cover; background-attachment: fixed; background-color: #000; }
+body{ 
+    font-family: 'Segoe UI', Arial; 
+    color:#fff; 
+    text-align:center; 
+    padding:20px; 
+    margin:0; 
+    background-image: url('bg.jpg'); 
+    background-size: cover; 
+    background-attachment: fixed; 
+    background-color: #000; 
+}
 h1{ color:#9147ff; text-shadow: 2px 2px 8px black; font-size: 2.5em; margin-bottom: 20px; }
-.section-title{ text-align: left; font-size: 1.5em; margin: 30px 20px 15px 20px; font-weight: bold; }
-.section-title span{ color:#00ff88; }
-#members{ display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 0 20px; }
-.member-card{ background: rgba(24, 24, 27, 0.9); border-radius: 12px; overflow: hidden; text-align: left; transition: 0.2s; border: 2px solid #555; }
-.member-card:hover{ transform: scale(1.03); border-color: #9147ff; }
-.member-card.live{ border-color: #00ff88; box-shadow: 0 0 15px #00ff88; }
-.thumbnail{ width: 100%; aspect-ratio: 16 / 9; background: #111; position: relative; display:flex; align-items:center; justify-content:center; }
-.thumbnail img{ width:100%; height:100%; object-fit:cover; }
+.section-title{ text-align: left; font-size: 1.5em; margin: 30px 20px 15px 20px; font-weight: bold; color:#00ff88; }
+#members{ 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
+    gap: 20px; 
+    padding: 0 20px; 
+}
+.member-card{ 
+    background: rgba(24, 24, 27, 0.9); 
+    border-radius: 12px; 
+    overflow: hidden; 
+    text-align: left; 
+    border: 2px solid #00ff88; 
+    box-shadow: 0 0 20px #00ff88; 
+    animation: pulse 2s infinite;
+}
+@keyframes pulse{ 0%,100%{box-shadow: 0 0 20px #00ff88;} 50%{box-shadow: 0 0 35px #00ff88;} }
+.thumbnail{ width: 100%; aspect-ratio: 16 / 9; background: #111; position: relative; }
 .thumbnail iframe{ width: 100%; height: 100%; border: none; }
-.live-badge{ position: absolute; top: 8px; left: 8px; background: red; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; z-index:2; }
-.offline-badge{ position: absolute; top: 8px; left: 8px; background: #555; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; z-index:2; }
+.live-badge{ position: absolute; top: 8px; left: 8px; background: red; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; z-index:2; }
+.viewer{ position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 4px; font-size: 12px; z-index:2; }
 .info{ padding: 12px; }
-.info h3{ margin: 0 0 5px 0; font-size: 16px; }
+.info h3{ margin: 0 0 5px 0; font-size: 18px; text-transform: uppercase; }
 .info p{ margin: 0 0 8px 0; font-size: 13px; color: #aaa; }
-.info a{ color:#9147ff; text-decoration:none; font-size:13px; font-weight:bold; }
-.rz7-logo{ width: 200px; margin-top: 40px; filter: drop-shadow(0 0 20px #9147ff); }
+.info a{ color:#9147ff; text-decoration:none; font-size:14px; font-weight:bold; }
+.rz7-logo{ width: 250px; margin-top: 40px; filter: drop-shadow(0 0 20px #9147ff); }
+.no-live{ color:#aaa; font-size:1.2em; padding:50px; }
 </style>
 </head>
 <body>
 
 <h1>RZ7 LIVE TIME</h1>
-<div class="section-title"><span>RZ7</span> Members</div>
-<div id="members"><p style="color:#aaa;">Loading...</p></div>
+<div class="section-title">LIVE NOW 🔴</div>
+<div id="members"><p class="no-live">Checking for live members...</p></div>
 
 <img src="https://i.imgur.com/xyz.png" class="rz7-logo" alt="RZ7">
 
@@ -37,64 +58,46 @@ h1{ color:#9147ff; text-shadow: 2px 2px 8px black; font-size: 2.5em; margin-bott
 const rz7Members = ["mack_gaming", "vegtamyron", "thalapathy-ftw", "nokiya_w"]; 
 const membersDiv = document.getElementById('members');
 
-function createCard(username, isLive, thumbnailUrl) {
-    let cardClass = 'member-card';
-    let badge = '<div class="offline-badge">Offline</div>';
-    let thumb = `<img src="${thumbnailUrl}" alt="${username}">`;
-    let status = 'Offline';
-
-    if(isLive){
-        cardClass += ' live';
-        badge = '<div class="live-badge">LIVE</div>';
-        thumb = `<iframe src="https://player.kick.com/${username}" allowfullscreen></iframe>`;
-        status = 'LIVE NOW';
-    }
-
-    return `
-    <div class="${cardClass}">
-        <div class="thumbnail">
-            ${badge}
-            ${thumb}
-        </div>
-        <div class="info">
-            <h3>${username}</h3>
-            <p>${status}</p>
-            <a href="https://kick.com/${username}" target="_blank">Watch on Kick →</a>
-        </div>
-    </div>
-    `;
-}
-
 async function checkLive() {
     membersDiv.innerHTML = '';
+    let liveCount = 0;
     
     for (const username of rz7Members) {
-        // Kick profile pic thumbnail aayi use cheyyum
-        const profilePic = `https://files.kick.com/images/user/${username}/profile_image/conversions/${username}-profile.jpg`;
-        const bannerPic = `https://files.kick.com/images/channel/${username}/banner_image/conversions/${username}-banner.jpg`;
-
-        // 5 sec wait cheythu player test cheyyu
-        const testFrame = document.createElement('iframe');
-        testFrame.src = `https://player.kick.com/${username}`;
-        testFrame.style.display = 'none';
-        document.body.appendChild(testFrame);
-
-        let isLive = false;
-        await new Promise(resolve => setTimeout(() => {
-            // Player load aayal live
-            testFrame.onload = () => isLive = true;
-            testFrame.onerror = () => isLive = false;
-            setTimeout(() => {
-                document.body.removeChild(testFrame);
-                membersDiv.innerHTML += createCard(username, isLive, bannerPic || profilePic);
-                resolve();
-            }, 1500);
-        }, 100));
+        try {
+            // Kick API check cheyyum
+            const res = await fetch(`https://kick.com/api/v2/channels/${username}`);
+            const data = await res.json();
+            
+            if(data.livestream){ // Live aanu enkil mathram
+                liveCount++;
+                const cardHTML = `
+                <div class="member-card">
+                    <div class="thumbnail">
+                        <div class="live-badge">LIVE</div>
+                        <div class="viewer">${data.livestream.viewer_count} viewers</div>
+                        <iframe src="https://player.kick.com/${username}" allowfullscreen></iframe>
+                    </div>
+                    <div class="info">
+                        <h3>${username}</h3>
+                        <p>${data.livestream.session_title}</p>
+                        <a href="https://kick.com/${username}" target="_blank">Watch on Kick →</a>
+                    </div>
+                </div>
+                `;
+                membersDiv.innerHTML += cardHTML;
+            }
+        } catch (e) {
+            // Error aanel skip cheyyu
+        }
+    }
+    
+    if(liveCount === 0){
+        membersDiv.innerHTML = '<p class="no-live">No RZ7 members live right now 😢<br>Check back later!</p>';
     }
 }
 
 checkLive();
-setInterval(checkLive, 30000);
+setInterval(checkLive, 15000); // 15 sec ku oru thavana refresh
 </script>
 
 </body>
