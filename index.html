@@ -5,93 +5,151 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RZ7 Live Tracker</title>
 <style>
- /* ========== BACKGROUND SETTINGS - IVIDE MAATTAM ========== */
- body{
-  font-family:Arial;
-  color:#fff;
-  text-align:center;
-  padding:20px;
-  margin:0;
-  
-  /* 👇 IVIDE NINTE PICTURE NAME IDU 👇 */
-  background-image: url('bg.jpg'); 
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
- }
+/* BACKGROUND */
+body{
+    font-family: Arial;
+    color:#fff;
+    text-align:center;
+    padding:20px;
+    margin:0;
+    background-image: url('bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-color: #000;
+}
 
- h1{
-  color:#9147ff;
-  text-shadow: 2px 2px 8px black; /* text clear aayi kanan */
-  font-size: 2.5em;
- }
+h1{
+    color:#9147ff;
+    text-shadow: 2px 2px 8px black;
+    font-size: 2.5em;
+}
 
- /* ========== MEMBER BOX SETTINGS ========== */
- .member{
-  background: rgba(24, 24, 27, 0.85); /* kondu black transparent */
-  backdrop-filter: blur(8px); /* blur effect */
-  border: 2px solid #555;
-  margin:15px auto;
-  padding:20px;
-  border-radius:15px;
-  width:320px;
-  transition: 0.3s;
- }
- .member:hover{
-  transform: scale(1.05);
- }
- .live{
-  border:2px solid #00ff7f;
-  box-shadow: 0 0 20px #00ff7f;
- }
- .offline{
-  opacity:0.6;
- }
- a{
-  color:#9147ff;
-  text-decoration: none;
-  font-weight: bold;
- }
- a:hover{
-  text-decoration: underline;
- }
+/* MEMBER BOX */
+.member{
+    background: rgba(24, 24, 27, 0.85);
+    backdrop-filter: blur(8px);
+    border: 2px solid #555;
+    margin:15px auto;
+    padding:20px;
+    border-radius:15px;
+    width:320px;
+    transition: 0.3s;
+}
+.member:hover{
+    transform: scale(1.03);
+    border-color: #9147ff;
+}
+
+.live{
+    border: 2px solid #00ff88;
+    box-shadow: 0 0 20px #00ff88;
+}
+
+.status-dot{
+    width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:5px;
+}
+.offline-dot{ background:#666; }
+.live-dot{ background:#00ff88; animation: pulse 1.5s infinite; }
+
+@keyframes pulse{
+    0%{box-shadow: 0 0 0 0 rgba(0,255,136,0.7);}
+    70%{box-shadow: 0 0 0 10px rgba(0,255,136,0);}
+    100%{box-shadow: 0 0 0 0 rgba(0,255,136,0);}
+}
+
+a{ color:#9147ff; text-decoration:none; font-weight:bold; }
+a:hover{ text-decoration:underline; }
+
+/* KICK EMBED PLAYER - Kick pole same size */
+.player-container{
+    width: 100%;
+    max-width: 480px; /* Kick player width pole */
+    margin: 20px auto;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 3px solid #00ff88;
+    box-shadow: 0 0 25px #00ff88;
+}
+.player-container iframe{
+    width: 100%;
+    height: 270px; /* 16:9 ratio - Kick pole */
+    border: none;
+}
+
+.rz7-logo{
+    width: 200px;
+    margin-top: 30px;
+    filter: drop-shadow(0 0 15px #9147ff);
+}
 </style>
 </head>
 <body>
+
 <h1>RZ7 LIVE TIME</h1>
-<div id="members">Checking RZ7 members...</div>
+<div id="members"></div>
+
+<!-- RZ7 LOGO -->
+<img src="https://i.imgur.com/xyz.png" class="rz7-logo" alt="RZ7"> <!-- Logo link maattan -->
 
 <script>
-// 👇 IVIDE NINTE RZ7 MEMBER USERNAME IDU 👇
-const rz7Members = ["mack_gaming", "vegtamyron", "thalapathy-ftw","nokiya_w"]; 
+// IVIDE NINTE TEAM USERNAME IDU
+const rz7Members = ["mack_gaming", "vegtamyron", "thalapathy-ftw", "nokiya_w"]; 
+
+const membersDiv = document.getElementById('members');
 
 async function checkLive() {
-  const container = document.getElementById("members");
-  container.innerHTML = "";
-  
-  for(let username of rz7Members){
-    try{
-      // CORS fix: proxy add cheythu
-      const res = await fetch(`https://corsproxy.io/?https://kick.com/api/v2/channels/${username}`);
-      const data = await res.json();
-      const isLive = data.livestream ? true : false;
-      const viewers = data.livestream ? data.livestream.viewer_count : 0;
-      
-      container.innerHTML += `
-        <div class="member ${isLive ? 'live' : 'offline'}">
-          <h3>${username}</h3>
-          <p>${isLive ? `🔴 LIVE NOW - ${viewers} viewers` : '⚫ Offline'}</p>
-          ${isLive ? `<a href="https://kick.com/${username}" target="_blank">Watch on Kick</a>` : ''}
-        </div>
-      `;
-    }catch(e){
-      console.log(e)
+    membersDiv.innerHTML = '';
+    let anyLive = false;
+
+    for (const username of rz7Members) {
+        try {
+            // Kick API use cheyyunnu
+            const res = await fetch(`https://kick.com/api/v2/channels/${username}`);
+            const data = await res.json();
+            
+            let statusHTML = '';
+            let memberClass = 'member';
+            let playerHTML = '';
+
+            if (data.livestream) {
+                // LIVE AANU
+                anyLive = true;
+                memberClass += ' live';
+                const viewers = data.livestream.viewer_count;
+                statusHTML = `<span class="status-dot live-dot"></span> LIVE NOW - ${viewers} viewers`;
+                
+                // IVIDE EMBED PLAYER VARUM - Height Width Kick pole
+                playerHTML = `
+                <div class="player-container">
+                    <iframe src="https://player.kick.com/${username}" allowfullscreen></iframe>
+                </div>
+                `;
+            } else {
+                // OFFLINE
+                statusHTML = `<span class="status-dot offline-dot"></span> Offline`;
+            }
+
+            membersDiv.innerHTML += `
+                <div class="${memberClass}">
+                    <h3>${username}</h3>
+                    <p>${statusHTML}</p>
+                    <a href="https://kick.com/${username}" target="_blank">Watch on Kick</a>
+                    ${playerHTML}
+                </div>
+            `;
+
+        } catch (e) {
+            membersDiv.innerHTML += `<div class="member"><h3>${username}</h3><p>Error</p></div>`;
+        }
     }
-  }
 }
+
+// 30 sec ku oru thavana check cheyyum
 checkLive();
-setInterval(checkLive, 30000); // 30 sec il refresh aavum
+setInterval(checkLive, 30000);
 </script>
+
 </body>
 </html>
