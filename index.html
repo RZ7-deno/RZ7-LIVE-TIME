@@ -11,26 +11,32 @@ body{
     text-align:center; 
     padding:20px; 
     margin:0; 
+    min-height: 100vh;
     background-image: url('bg.jpg'); 
     background-size: cover; 
+    background-position: center;
+    background-repeat: no-repeat;
     background-attachment: fixed; 
-    background-color: #000; 
+    background-color: #0a0014; 
 }
-h1{ color:#9147ff; text-shadow: 2px 2px 8px black; font-size: 2.5em; margin-bottom: 20px; }
-.section-title{ text-align: left; font-size: 1.5em; margin: 30px 20px 15px 20px; font-weight: bold; color:#00ff88; }
+h1{ color:#9147ff; text-shadow: 0 0 15px #9147ff; font-size: 2.8em; margin-bottom: 20px; }
+.section-title{ text-align: left; font-size: 1.5em; margin: 30px 20px 15px 20px; font-weight: bold; color:#00ff88; text-shadow: 0 0 10px #00ff88; }
 #members{ 
     display: grid; 
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
     gap: 20px; 
     padding: 0 20px; 
+    max-width: 1200px;
+    margin: 0 auto;
 }
 .member-card{ 
-    background: rgba(24, 24, 27, 0.9); 
+    background: rgba(24, 24, 27, 0.85); 
     border-radius: 12px; 
     overflow: hidden; 
     text-align: left; 
     border: 2px solid #00ff88; 
     box-shadow: 0 0 20px #00ff88; 
+    backdrop-filter: blur(5px);
     animation: pulse 2s infinite;
 }
 @keyframes pulse{ 0%,100%{box-shadow: 0 0 20px #00ff88;} 50%{box-shadow: 0 0 35px #00ff88;} }
@@ -42,8 +48,14 @@ h1{ color:#9147ff; text-shadow: 2px 2px 8px black; font-size: 2.5em; margin-bott
 .info h3{ margin: 0 0 5px 0; font-size: 18px; text-transform: uppercase; }
 .info p{ margin: 0 0 8px 0; font-size: 13px; color: #aaa; }
 .info a{ color:#9147ff; text-decoration:none; font-size:14px; font-weight:bold; }
-.rz7-logo{ width: 250px; margin-top: 40px; filter: drop-shadow(0 0 20px #9147ff); }
-.no-live{ color:#aaa; font-size:1.2em; padding:50px; }
+.info a:hover{ text-decoration: underline; }
+.rz7-logo{ 
+    width: 280px; 
+    margin-top: 50px; 
+    margin-bottom: 50px;
+    filter: drop-shadow(0 0 25px #9147ff); 
+}
+.no-live{ color:#aaa; font-size:1.2em; padding:50px; text-align:center; grid-column: 1 / -1; }
 </style>
 </head>
 <body>
@@ -52,7 +64,7 @@ h1{ color:#9147ff; text-shadow: 2px 2px 8px black; font-size: 2.5em; margin-bott
 <div class="section-title">LIVE NOW 🔴</div>
 <div id="members"><p class="no-live">Checking for live members...</p></div>
 
-<img src="https://i.imgur.com/xyz.png" class="rz7-logo" alt="RZ7">
+<img src="rz7-logo.png" class="rz7-logo" alt="RZ7">
 
 <script>
 const rz7Members = ["mack_gaming", "vegtamyron", "thalapathy-ftw", "nokiya_w"]; 
@@ -64,11 +76,10 @@ async function checkLive() {
     
     for (const username of rz7Members) {
         try {
-            // Kick API check cheyyum
             const res = await fetch(`https://kick.com/api/v2/channels/${username}`);
             const data = await res.json();
             
-            if(data.livestream){ // Live aanu enkil mathram
+            if(data.livestream){
                 liveCount++;
                 const cardHTML = `
                 <div class="member-card">
@@ -86,9 +97,7 @@ async function checkLive() {
                 `;
                 membersDiv.innerHTML += cardHTML;
             }
-        } catch (e) {
-            // Error aanel skip cheyyu
-        }
+        } catch (e) {}
     }
     
     if(liveCount === 0){
@@ -97,7 +106,7 @@ async function checkLive() {
 }
 
 checkLive();
-setInterval(checkLive, 15000); // 15 sec ku oru thavana refresh
+setInterval(checkLive, 15000);
 </script>
 
 </body>
