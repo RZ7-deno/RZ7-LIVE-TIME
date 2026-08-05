@@ -52,7 +52,7 @@ h1{ color:#9147ff; text-shadow: 2px 2px 8px black; font-size: 2.5em; margin-bott
 <div class="section-title">LIVE NOW 🔴</div>
 <div id="members"><p class="no-live">Checking for live members...</p></div>
 
-<img src="rz7-logo.png" class="rz7-logo" alt="RZ7">
+<img src="https://i.imgur.com/xyz.png" class="rz7-logo" alt="RZ7">
 
 <script>
 const rz7Members = ["mack_gaming", "vegtamyron", "thalapathy-ftw", "nokiya_w"]; 
@@ -64,10 +64,11 @@ async function checkLive() {
     
     for (const username of rz7Members) {
         try {
+            // Kick API check cheyyum
             const res = await fetch(`https://kick.com/api/v2/channels/${username}`);
             const data = await res.json();
             
-            if(data.livestream){
+            if(data.livestream){ // Live aanu enkil mathram
                 liveCount++;
                 const cardHTML = `
                 <div class="member-card">
@@ -85,7 +86,9 @@ async function checkLive() {
                 `;
                 membersDiv.innerHTML += cardHTML;
             }
-        } catch (e) {}
+        } catch (e) {
+            // Error aanel skip cheyyu
+        }
     }
     
     if(liveCount === 0){
@@ -94,7 +97,7 @@ async function checkLive() {
 }
 
 checkLive();
-setInterval(checkLive, 15000);
+setInterval(checkLive, 15000); // 15 sec ku oru thavana refresh
 </script>
 
 </body>
