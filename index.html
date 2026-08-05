@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RZ7 Live Tracker</title>
+<style>
+ /* ========== BACKGROUND SETTINGS - IVIDE MAATTAM ========== */
+ body{
+  font-family:Arial;
+  color:#fff;
+  text-align:center;
+  padding:20px;
+  margin:0;
+  
+  /* 👇 IVIDE NINTE PICTURE NAME IDU 👇 */
+  background-image: url('bg.jpg'); 
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+ }
+
+ h1{
+  color:#9147ff;
+  text-shadow: 2px 2px 8px black; /* text clear aayi kanan */
+  font-size: 2.5em;
+ }
+
+ /* ========== MEMBER BOX SETTINGS ========== */
+ .member{
+  background: rgba(24, 24, 27, 0.85); /* kondu black transparent */
+  backdrop-filter: blur(8px); /* blur effect */
+  border: 2px solid #555;
+  margin:15px auto;
+  padding:20px;
+  border-radius:15px;
+  width:320px;
+  transition: 0.3s;
+ }
+ .member:hover{
+  transform: scale(1.05);
+ }
+ .live{
+  border:2px solid #00ff7f;
+  box-shadow: 0 0 20px #00ff7f;
+ }
+ .offline{
+  opacity:0.6;
+ }
+ a{
+  color:#9147ff;
+  text-decoration: none;
+  font-weight: bold;
+ }
+ a:hover{
+  text-decoration: underline;
+ }
+</style>
+</head>
+<body>
+<h1>🔴 RZ7 Live Tracker</h1>
+<div id="members">Checking RZ7 members...</div>
+
+<script>
+// 👇 IVIDE NINTE RZ7 MEMBER USERNAME IDU 👇
+const rz7Members = ["shameem_gaming", "deno_gg", "rz7_player"]; 
+
+async function checkLive() {
+  const container = document.getElementById("members");
+  container.innerHTML = "";
+  
+  for(let username of rz7Members){
+    try{
+      // CORS fix: proxy add cheythu
+      const res = await fetch(`https://corsproxy.io/?https://kick.com/api/v2/channels/${username}`);
+      const data = await res.json();
+      const isLive = data.livestream ? true : false;
+      const viewers = data.livestream ? data.livestream.viewer_count : 0;
+      
+      container.innerHTML += `
+        <div class="member ${isLive ? 'live' : 'offline'}">
+          <h3>${username}</h3>
+          <p>${isLive ? `🔴 LIVE NOW - ${viewers} viewers` : '⚫ Offline'}</p>
+          ${isLive ? `<a href="https://kick.com/${username}" target="_blank">Watch on Kick</a>` : ''}
+        </div>
+      `;
+    }catch(e){
+      console.log(e)
+    }
+  }
+}
+checkLive();
+setInterval(checkLive, 30000); // 30 sec il refresh aavum
+</script>
+</body>
+</html>
