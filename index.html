@@ -17,10 +17,26 @@ body{
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed; 
-    background-color: #0a0014; 
+    background-color: #050014; 
 }
-h1{ color:#ff0033; text-shadow: 0 0 15px #ff0033; font-size: 2.8em; margin-bottom: 20px; }
-.section-title{ text-align: left; font-size: 1.5em; margin: 30px 20px 15px 20px; font-weight: bold; color:#ff0033; text-shadow: 0 0 10px #ff0033; }
+
+/* RED MAATI PURPLE NEON AAKKI */
+h1{ 
+    color:#b300ff; 
+    text-shadow: 0 0 15px #b300ff, 0 0 30px #8a00ff; 
+    font-size: 2.8em; 
+    margin-bottom: 20px; 
+}
+
+.section-title{ 
+    text-align: left; 
+    font-size: 1.5em; 
+    margin: 30px 20px 15px 20px; 
+    font-weight: bold; 
+    color:#8a00ff; 
+    text-shadow: 0 0 10px #8a00ff; 
+}
+
 #members{ 
     display: grid; 
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
@@ -29,32 +45,43 @@ h1{ color:#ff0033; text-shadow: 0 0 15px #ff0033; font-size: 2.8em; margin-botto
     max-width: 1200px;
     margin: 0 auto;
 }
+
 .member-card{ 
-    background: rgba(24, 24, 27, 0.85); 
+    background: rgba(20, 10, 40, 0.85); 
     border-radius: 12px; 
     overflow: hidden; 
     text-align: left; 
-    border: 2px solid #ff0033; 
-    box-shadow: 0 0 20px #ff0033; 
+    border: 2px solid #8a00ff; 
+    box-shadow: 0 0 20px #8a00ff; 
     backdrop-filter: blur(5px);
     animation: pulse 2s infinite;
 }
-@keyframes pulse{ 0%,100%{box-shadow: 0 0 20px #ff0033;} 50%{box-shadow: 0 0 35px #ff0033;} }
+
+@keyframes pulse{ 
+    0%,100%{box-shadow: 0 0 20px #8a00ff;} 
+    50%{box-shadow: 0 0 35px #b300ff;} 
+}
+
 .thumbnail{ width: 100%; aspect-ratio: 16 / 9; background: #111; position: relative; }
 .thumbnail iframe{ width: 100%; height: 100%; border: none; }
 .live-badge{ position: absolute; top: 8px; left: 8px; background: red; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; z-index:2; }
 .viewer{ position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 4px; font-size: 12px; z-index:2; }
+
 .info{ padding: 12px; }
 .info h3{ margin: 0 0 5px 0; font-size: 18px; text-transform: uppercase; }
 .info p{ margin: 0 0 8px 0; font-size: 13px; color: #aaa; }
-.info a{ color:#ff0033; text-decoration:none; font-size:14px; font-weight:bold; }
-.info a:hover{ text-decoration: underline; }
+
+/* LINK COLOR UMM PURPLE AAKKI */
+.info a{ color:#b300ff; text-decoration:none; font-size:14px; font-weight:bold; }
+.info a:hover{ text-decoration: underline; text-shadow: 0 0 10px #b300ff; }
+
 .rz7-logo{ 
     width: 300px; 
     margin-top: 50px; 
     margin-bottom: 50px;
-    filter: drop-shadow(0 0 25px #ff0033); 
+    filter: drop-shadow(0 0 25px #8a00ff); 
 }
+
 .no-live{ color:#aaa; font-size:1.2em; padding:50px; text-align:center; grid-column: 1 / -1; }
 </style>
 </head>
@@ -64,7 +91,7 @@ h1{ color:#ff0033; text-shadow: 0 0 15px #ff0033; font-size: 2.8em; margin-botto
 <div class="section-title">LIVE NOW 🔴</div>
 <div id="members"><p class="no-live">Checking for live members...</p></div>
 
-<img src="rz7-king-logo.png" class="rz7-logo" alt="RZ7">
+<img src="razeus7-official-logo.png" class="rz7-logo" alt="RAZEUS-7">
 
 <script>
 const rz7Members = ["mack_gaming", "vegtamyron", "thalapathy-ftw", "nokiya_w","thegod","wipzy_og","jjlit","pranavsettan","rz7-rinu","charanw","rz7-khalid"]; 
@@ -91,23 +118,3 @@ async function checkLive() {
                     <div class="info">
                         <h3>${username}</h3>
                         <p>${data.livestream.session_title}</p>
-                        <a href="https://kick.com/${username}" target="_blank">Watch on Kick →</a>
-                    </div>
-                </div>
-                `;
-                membersDiv.innerHTML += cardHTML;
-            }
-        } catch (e) {}
-    }
-    
-    if(liveCount === 0){
-        membersDiv.innerHTML = '<p class="no-live">No RZ7 members live right now 😢<br>Check back later!</p>';
-    }
-}
-
-checkLive();
-setInterval(checkLive, 15000);
-</script>
-
-</body>
-</html>
