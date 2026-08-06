@@ -19,8 +19,8 @@ body{
     background-attachment: fixed; 
     background-color: #0a0014; 
 }
-h1{ color:#9147ff; text-shadow: 0 0 15px #9147ff; font-size: 2.8em; margin-bottom: 20px; }
-.section-title{ text-align: left; font-size: 1.5em; margin: 30px 20px 15px 20px; font-weight: bold; color:#00ff88; text-shadow: 0 0 10px #00ff88; }
+h1{ color:#ff0033; text-shadow: 0 0 15px #ff0033; font-size: 2.8em; margin-bottom: 20px; }
+.section-title{ text-align: left; font-size: 1.5em; margin: 30px 20px 15px 20px; font-weight: bold; color:#ff0033; text-shadow: 0 0 10px #ff0033; }
 #members{ 
     display: grid; 
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
@@ -34,12 +34,12 @@ h1{ color:#9147ff; text-shadow: 0 0 15px #9147ff; font-size: 2.8em; margin-botto
     border-radius: 12px; 
     overflow: hidden; 
     text-align: left; 
-    border: 2px solid #00ff88; 
-    box-shadow: 0 0 20px #00ff88; 
+    border: 2px solid #ff0033; 
+    box-shadow: 0 0 20px #ff0033; 
     backdrop-filter: blur(5px);
     animation: pulse 2s infinite;
 }
-@keyframes pulse{ 0%,100%{box-shadow: 0 0 20px #00ff88;} 50%{box-shadow: 0 0 35px #00ff88;} }
+@keyframes pulse{ 0%,100%{box-shadow: 0 0 20px #ff0033;} 50%{box-shadow: 0 0 35px #ff0033;} }
 .thumbnail{ width: 100%; aspect-ratio: 16 / 9; background: #111; position: relative; }
 .thumbnail iframe{ width: 100%; height: 100%; border: none; }
 .live-badge{ position: absolute; top: 8px; left: 8px; background: red; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; z-index:2; }
@@ -47,13 +47,13 @@ h1{ color:#9147ff; text-shadow: 0 0 15px #9147ff; font-size: 2.8em; margin-botto
 .info{ padding: 12px; }
 .info h3{ margin: 0 0 5px 0; font-size: 18px; text-transform: uppercase; }
 .info p{ margin: 0 0 8px 0; font-size: 13px; color: #aaa; }
-.info a{ color:#9147ff; text-decoration:none; font-size:14px; font-weight:bold; }
+.info a{ color:#ff0033; text-decoration:none; font-size:14px; font-weight:bold; }
 .info a:hover{ text-decoration: underline; }
 .rz7-logo{ 
-    width: 280px; 
+    width: 300px; 
     margin-top: 50px; 
     margin-bottom: 50px;
-    filter: drop-shadow(0 0 25px #9147ff); 
+    filter: drop-shadow(0 0 25px #ff0033); 
 }
 .no-live{ color:#aaa; font-size:1.2em; padding:50px; text-align:center; grid-column: 1 / -1; }
 </style>
@@ -64,8 +64,8 @@ h1{ color:#9147ff; text-shadow: 0 0 15px #9147ff; font-size: 2.8em; margin-botto
 <div class="section-title">LIVE NOW 🔴</div>
 <div id="members"><p class="no-live">Checking for live members...</p></div>
 
-    
-    
+<img src="rz7-king-logo.png" class="rz7-logo" alt="RZ7">
+
 <script>
 const rz7Members = ["mack_gaming", "vegtamyron", "thalapathy-ftw", "nokiya_w","thegod","wipzy_og","jjlit","pranavsettan","rz7-rinu","charanw","rz7-khalid"]; 
 const membersDiv = document.getElementById('members');
