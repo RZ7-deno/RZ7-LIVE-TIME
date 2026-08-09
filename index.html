@@ -12,12 +12,14 @@ body{
     padding:20px; 
     margin:0; 
     min-height: 100vh;
-    background: url('team.png'); /* Gradient edukki - direct photo */
-    background-size: contain; 
-    background-position: center ;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    background-color: #0a0010; /* Dark maroon bg */
+    background: 
+        linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)),
+        url('team.png'); 
+    background-size: cover, contain; 
+    background-position: center, center top;
+    background-attachment: fixed, fixed;
+    background-repeat: no-repeat, no-repeat;
+    background-color: #0a0010;
 }
 
 h1{ 
@@ -84,7 +86,9 @@ h1{
     box-shadow: 0 0 20px #00ff88; 
     backdrop-filter: blur(5px);
     animation: pulse 2s infinite;
+    transition: transform 0.3s;
 }
+.member-card:hover { transform: scale(1.02); }
 @keyframes pulse{ 0%,100%{box-shadow: 0 0 20px #00ff88;} 50%{box-shadow: 0 0 35px #00ff88;} }
 .thumbnail{ width: 100%; aspect-ratio: 16 / 9; background: #111; position: relative; }
 .thumbnail iframe{ width: 100%; height: 100%; border: none; }
@@ -96,6 +100,23 @@ h1{
 .info a{ color:#9147ff; text-decoration:none; font-size:14px; font-weight:bold; }
 .info a:hover{ text-decoration: underline; }
 .no-live{ color:#aaa; font-size:1.2em; padding:50px; text-align:center; grid-column: 1 / -1; }
+
+/* LOGO SECTION */
+.logo-section {
+    text-align: center;
+    padding: 80px 20px;
+    margin-top: 50px;
+}
+.logo-section img {
+    width: 100%;
+    max-width: 450px;
+    filter: drop-shadow(0 0 30px #9147ff);
+    animation: logo-glow 3s ease-in-out infinite;
+}
+@keyframes logo-glow {
+    0%, 100% { filter: drop-shadow(0 0 20px #9147ff); transform: scale(1); }
+    50% { filter: drop-shadow(0 0 50px #9147ff); transform: scale(1.05); }
+}
 </style>
 </head>
 <body>
@@ -109,6 +130,10 @@ h1{
 
 <div class="section-title">LIVE MEMBERS</div>
 <div id="members"><p class="no-live">Checking for live members...</p></div>
+
+<div class="logo-section">
+    <img src="rz7-logo .jpg" alt="RZ7 Logo">
+</div>
     
 <script>
 const rz7Members = ["mack_gaming", "vegtamyron", "thalapathy-ftw", "nokiya_w","thegod","wipzy_og","jjlit","pranavsettan","rz7-rinu","charanw","rz7-khalid","fatboygaming77"]; 
@@ -122,8 +147,12 @@ async function checkLive() {
     
     for (const username of rz7Members) {
         try {
-            const res = await fetch(`https://kick.com/api/v2/channels/${username}`);
-            const data = await res.json();
+            // IVIDE MAATTAM - PROXY ADD CHEYYU
+            const proxyUrl = 'https://api.allorigins.win/get?url=';
+            const kickUrl = `https://kick.com/api/v2/channels/${username}`;
+            const res = await fetch(proxyUrl + encodeURIComponent(kickUrl));
+            const wrapper = await res.json();
+            const data = JSON.parse(wrapper.contents); // Proxy nte ullil irikkunna data
             
             if(data.livestream){
                 liveCount++;
@@ -143,7 +172,9 @@ async function checkLive() {
                 `;
                 membersDiv.innerHTML += cardHTML;
             }
-        } catch (e) {}
+        } catch (e) {
+            console.log(username + " error:", e);
+        }
     }
     
     if(liveCount > 0){
@@ -157,7 +188,7 @@ async function checkLive() {
 }
 
 checkLive();
-setInterval(checkLive, 15000);
+setInterval(checkLive, 20000); // 20 sec aakki, proxy slow aanu
 </script>
 
 </body>
