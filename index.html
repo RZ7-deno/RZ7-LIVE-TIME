@@ -12,14 +12,12 @@ body{
     padding:20px; 
     margin:0; 
     min-height: 100vh;
-    background: 
-        linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)),
-        url('team.png');
-    background-size: cover, 95%;
-    background-position: center, center 600px;
-    background-attachment: fixed, fixed;
-    background-repeat: no-repeat, no-repeat;
-    background-color: #000; 
+    background: url('team.png'); /* Gradient edukki - direct photo */
+    background-size: contain; 
+    background-position: center ;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-color: #0a0010; /* Dark maroon bg */
 }
 
 h1{ 
@@ -76,7 +74,6 @@ h1{
     padding: 0 20px; 
     max-width: 1200px;
     margin: 0 auto;
-    min-height: 400px;
 }
 .member-card{ 
     background: rgba(24, 24, 27, 0.85); 
@@ -99,24 +96,6 @@ h1{
 .info a{ color:#9147ff; text-decoration:none; font-size:14px; font-weight:bold; }
 .info a:hover{ text-decoration: underline; }
 .no-live{ color:#aaa; font-size:1.2em; padding:50px; text-align:center; grid-column: 1 / -1; }
-
-/* PUTHIYA LOGO SECTION */
-.logo-section {
-    text-align: center;
-    padding: 80px 20px;
-    margin-top: 50px;
-}
-.logo-section img {
-    width: 100%;
-    max-width: 450px;
-    filter: drop-shadow(0 0 30px #9147ff);
-    animation: logo-glow 3s ease-in-out infinite;
-}
-
-@keyframes logo-glow {
-    0%, 100% { filter: drop-shadow(0 0 20px #9147ff); transform: scale(1); }
-    50% { filter: drop-shadow(0 0 50px #9147ff); transform: scale(1.05); }
-}
 </style>
 </head>
 <body>
@@ -130,11 +109,6 @@ h1{
 
 <div class="section-title">LIVE MEMBERS</div>
 <div id="members"><p class="no-live">Checking for live members...</p></div>
-
-<!-- ITHU PUTHIYATHU - LOGO -->
-<div class="logo-section">
-    <img src="rz7-logo .jpg" alt="RZ7 Logo">
-</div>
     
 <script>
 const rz7Members = ["mack_gaming", "vegtamyron", "thalapathy-ftw", "nokiya_w","thegod","wipzy_og","jjlit","pranavsettan","rz7-rinu","charanw","rz7-khalid","fatboygaming77"]; 
@@ -157,4 +131,34 @@ async function checkLive() {
                 <div class="member-card">
                     <div class="thumbnail">
                         <div class="live-badge">LIVE</div>
-                        <div class="viewer">${data.l
+                        <div class="viewer">${data.livestream.viewer_count} viewers</div>
+                        <iframe src="https://player.kick.com/${username}" allowfullscreen></iframe>
+                    </div>
+                    <div class="info">
+                        <h3>${username}</h3>
+                        <p>${data.livestream.session_title}</p>
+                        <a href="https://kick.com/${username}" target="_blank">Watch on Kick →</a>
+                    </div>
+                </div>
+                `;
+                membersDiv.innerHTML += cardHTML;
+            }
+        } catch (e) {}
+    }
+    
+    if(liveCount > 0){
+        statusText.innerText = "LIVE NOW";
+        statusBox.className = "status-box live";
+    } else {
+        statusText.innerText = "NOT LIVE";
+        statusBox.className = "status-box not-live";
+        membersDiv.innerHTML = '<p class="no-live">No RZ7 members live right now 😢<br>Check back later!</p>';
+    }
+}
+
+checkLive();
+setInterval(checkLive, 15000);
+</script>
+
+</body>
+</html>
