@@ -3,129 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RZ7 LOGIN</title>
+<title>RZ7 LIVE TIME</title>
 <style>
 body{ 
     font-family: 'Segoe UI', Arial; 
     color:#fff; 
+    text-align:center; 
+    padding:20px; 
     margin:0; 
     min-height: 100vh;
-    background-image: url('bg.jpg'); /* ninte purple bg.jpg */
+    background-image: url('bg.jpg'); 
     background-size: cover; 
     background-position: center;
+    background-repeat: no-repeat;
     background-attachment: fixed; 
-    background-color: #000; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background-color: #0a0014; 
 }
-
-/* SCREENSHOT POLE EXACT BOX */
-.login-box{
-    background: rgba(10, 10, 10, 0.85);
-    padding: 40px 30px;
-    border-radius: 15px;
-    border: 2px solid #00ff66;
-    box-shadow: 0 0 15px #00ff66, 0 0 30px #00ff66;
-    width: 90%;
-    max-width: 400px;
-    text-align: center;
-    animation: neonPulse 2s infinite alternate;
+h1{ color:#9147ff; text-shadow: 0 0 15px #9147ff; font-size: 2.8em; margin-bottom: 20px; }
+.section-title{ text-align: left; font-size: 1.5em; margin: 30px 20px 15px 20px; font-weight: bold; color:#00ff88; text-shadow: 0 0 10px #00ff88; }
+#members{ 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
+    gap: 20px; 
+    padding: 0 20px; 
+    max-width: 1200px;
+    margin: 0 auto;
 }
-@keyframes neonPulse{
-    from{box-shadow: 0 0 15px #00ff66, 0 0 30px #00ff66;}
-    to{box-shadow: 0 0 25px #00ff66, 0 0 50px #00ff66;}
+.member-card{ 
+    background: rgba(24, 24, 27, 0.85); 
+    border-radius: 12px; 
+    overflow: hidden; 
+    text-align: left; 
+    border: 2px solid #00ff88; 
+    box-shadow: 0 0 20px #00ff88; 
+    backdrop-filter: blur(5px);
+    animation: pulse 2s infinite;
 }
-
-.login-box h2{ 
-    color:#00ff66; 
-    margin-bottom: 30px; 
-    font-size: 28px;
-    text-shadow: 0 0 10px #00ff66;
+@keyframes pulse{ 0%,100%{box-shadow: 0 0 20px #00ff88;} 50%{box-shadow: 0 0 35px #00ff88;} }
+.thumbnail{ width: 100%; aspect-ratio: 16 / 9; background: #111; position: relative; }
+.thumbnail iframe{ width: 100%; height: 100%; border: none; }
+.live-badge{ position: absolute; top: 8px; left: 8px; background: red; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; z-index:2; }
+.viewer{ position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 4px; font-size: 12px; z-index:2; }
+.info{ padding: 12px; }
+.info h3{ margin: 0 0 5px 0; font-size: 18px; text-transform: uppercase; }
+.info p{ margin: 0 0 8px 0; font-size: 13px; color: #aaa; }
+.info a{ color:#9147ff; text-decoration:none; font-size:14px; font-weight:bold; }
+.info a:hover{ text-decoration: underline; }
+.rz7-logo{ 
+    width: 280px; 
+    margin-top: 50px; 
+    margin-bottom: 50px;
+    filter: drop-shadow(0 0 25px #9147ff); 
 }
-
-.login-box input{
-    width: 90%;
-    padding: 15px;
-    margin: 15px 0;
-    border: 2px solid #8a00ff; /* Purple border */
-    border-radius: 10px;
-    background: #000;
-    color: #fff;
-    font-size: 16px;
-    outline: none;
-    transition: 0.3s;
-}
-.login-box input:focus{
-    border-color: #00ff66;
-    box-shadow: 0 0 15px #00ff66;
-}
-
-.login-btn{
-    width: 100%;
-    padding: 15px;
-    margin-top: 20px;
-    background: #00ff66;
-    color: #000;
-    border: none;
-    border-radius: 10px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-}
-.login-btn:hover{ 
-    background: #00cc52; 
-    box-shadow: 0 0 20px #00ff66;
-}
-
-.error{ color: #ff0044; margin-top: 15px; font-weight: bold; }
-
-/* MAIN SITE */
-#main-site{ display: none; padding:20px; width:100%; }
+.no-live{ color:#aaa; font-size:1.2em; padding:50px; text-align:center; grid-column: 1 / -1; }
 </style>
 </head>
 <body>
 
-<!-- LOGIN PAGE -->
-<div id="login-page">
-    <div class="login-box">
-        <h2>RZ7 LOGIN 🔐</h2>
-        <input type="text" id="login-user" placeholder="Username">
-        <input type="password" id="login-pass" placeholder="Password">
-        <button class="login-btn" onclick="login()">LOGIN</button>
-        <p id="login-error" class="error"></p>
-    </div>
-</div>
+<h1>RZ7 LIVE TIME</h1>
+<div class="section-title">LIVE NOW 🔴</div>
+<div id="members"><p class="no-live">Checking for live members...</p></div>
 
-<!-- MAIN SITE -->
-<div id="main-site">
-<h1 style="text-align:center; color:#00ff66;">RZ7 LIVE TIME</h1>
-<p style="text-align:center;">Login Success! Live page ivide add cheyyam</p>
-<button onclick="logout()" style="position:fixed; top:20px; right:20px; background:red; color:white; padding:10px; border:none; border-radius:8px;">LOGOUT</button>
-</div>
-
-<script>
-let users = [{user: "rz7admin", pass: "king@2026"}];
-
-if(localStorage.getItem('rz7_logged_in') === 'true'){
-    document.getElementById('login-page').style.display = 'none';
-    document.getElementById('main-site').style.display = 'block';
-}
-
-function login(){
-    const user = document.getElementById('login-user').value;
-    const pass = document.getElementById('login-pass').value;
     
-    if(users.find(u => u.user === user && u.pass === pass)){
-        localStorage.setItem('rz7_logged_in', 'true');
-        location.reload();
-    } else { 
-        document.getElementById('login-error').innerText = "Username or Password thappanu!"; 
+    
+<script>
+const rz7Members = ["mack_gaming", "vegtamyron", "thalapathy-ftw", "nokiya_w","thegod","wipzy_og","jjlit","pranavsettan","rz7-rinu","charanw","rz7-khalid"]; 
+const membersDiv = document.getElementById('members');
+
+async function checkLive() {
+    membersDiv.innerHTML = '';
+    let liveCount = 0;
+    
+    for (const username of rz7Members) {
+        try {
+            const res = await fetch(`https://kick.com/api/v2/channels/${username}`);
+            const data = await res.json();
+            
+            if(data.livestream){
+                liveCount++;
+                const cardHTML = `
+                <div class="member-card">
+                    <div class="thumbnail">
+                        <div class="live-badge">LIVE</div>
+                        <div class="viewer">${data.livestream.viewer_count} viewers</div>
+                        <iframe src="https://player.kick.com/${username}" allowfullscreen></iframe>
+                    </div>
+                    <div class="info">
+                        <h3>${username}</h3>
+                        <p>${data.livestream.session_title}</p>
+                        <a href="https://kick.com/${username}" target="_blank">Watch on Kick →</a>
+                    </div>
+                </div>
+                `;
+                membersDiv.innerHTML += cardHTML;
+            }
+        } catch (e) {}
+    }
+    
+    if(liveCount === 0){
+        membersDiv.innerHTML = '<p class="no-live">No RZ7 members live right now 😢<br>Check back later!</p>';
     }
 }
-function logout(){ localStorage.removeItem('rz7_logged_in'); location.reload(); }
+
+checkLive();
+setInterval(checkLive, 15000);
 </script>
 
 </body>
 </html>
+ 
+Ethan ippolthe code webnte
