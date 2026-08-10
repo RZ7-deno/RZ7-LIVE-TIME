@@ -58,6 +58,8 @@ const statusBox = document.getElementById('status-box');
 const statusText = document.getElementById('status-text');
 
 async function checkLive() {
+    statusText.innerText = "LIVE NOW";
+    statusBox.className = "status-box live";
     membersDiv.innerHTML = '';
     let liveCount = 0;
     
