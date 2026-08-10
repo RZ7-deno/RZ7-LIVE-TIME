@@ -21,73 +21,17 @@ body{
     background-repeat: no-repeat, no-repeat;
     background-color: #0a0010;
 }
-
-h1{ 
-    color:#9147ff; 
-    text-shadow: 0 0 15px #9147ff; 
-    font-size: 2.8em; 
-    margin-bottom: 10px; 
-    text-align: left;
-    padding-left: 20px;
-}
-
-.status-box {
-    text-align: left;
-    padding-left: 20px;
-    margin-bottom: 20px;
-    font-size: 1.2em;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.status-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-}
-.live {
-    color: #00ff00;
-}
-.live .status-dot {
-    background: #00ff00;
-    box-shadow: 0 0 10px #00ff00;
-    animation: pulse-dot 1.5s infinite;
-}
-.not-live {
-    color: #ff4444;
-}
-.not-live .status-dot {
-    background: #ff4444;
-    box-shadow: 0 0 10px #ff4444;
-}
-
-@keyframes pulse-dot{ 
-    0% { transform: scale(1); opacity: 1; } 
-    50% { transform: scale(1.3); opacity: 0.5; } 
-    100% { transform: scale(1); opacity: 1; } 
-}
-
+h1{ color:#9147ff; text-shadow: 0 0 15px #9147ff; font-size: 2.8em; margin-bottom: 10px; text-align: left; padding-left: 20px;}
+.status-box {text-align: left; padding-left: 20px; margin-bottom: 20px; font-size: 1.2em; font-weight: bold; display: flex; align-items: center; gap: 8px;}
+.status-dot {width: 12px; height: 12px; border-radius: 50%;}
+.live {color: #00ff00;}
+.live .status-dot {background: #00ff00; box-shadow: 0 0 10px #00ff00; animation: pulse-dot 1.5s infinite;}
+.not-live {color: #ff4444;}
+.not-live .status-dot {background: #ff4444; box-shadow: 0 0 10px #ff4444;}
+@keyframes pulse-dot{ 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; }
 .section-title{ text-align: left; font-size: 1.5em; margin: 30px 20px 15px 20px; font-weight: bold; color:#00ff88; text-shadow: 0 0 10px #00ff88; }
-#members{ 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
-    gap: 20px; 
-    padding: 0 20px 60px 20px; 
-    max-width: 1200px;
-    margin: 0 auto;
-}
-.member-card{ 
-    background: rgba(24, 24, 27, 0.85); 
-    border-radius: 12px; 
-    overflow: hidden; 
-    text-align: left; 
-    border: 2px solid #00ff88; 
-    box-shadow: 0 0 20px #00ff88; 
-    backdrop-filter: blur(5px);
-    animation: pulse 2s infinite;
-    transition: transform 0.3s;
-}
+#members{ display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; padding: 0 20px 60px 20px; max-width: 1200px; margin: 0 auto;}
+.member-card{ background: rgba(24, 24, 27, 0.85); border-radius: 12px; overflow: hidden; text-align: left; border: 2px solid #00ff88; box-shadow: 0 0 20px #00ff88; backdrop-filter: blur(5px); animation: pulse 2s infinite; transition: transform 0.3s;}
 .member-card:hover { transform: scale(1.02); }
 @keyframes pulse{ 0%,100%{box-shadow: 0 0 20px #00ff88;} 50%{box-shadow: 0 0 35px #00ff88;} }
 .thumbnail{ width: 100%; aspect-ratio: 16 / 9; background: #111; position: relative; }
@@ -103,17 +47,10 @@ h1{
 </style>
 </head>
 <body>
-
 <h1>RZ7 LIVE TIME</h1>
-
-<div id="status-box" class="status-box">
-    <span id="status-text">CHECKING...</span>
-    <span class="status-dot"></span>
-</div>
-
+<div id="status-box" class="status-box"><span id="status-text">CHECKING...</span><span class="status-dot"></span></div>
 <div class="section-title">LIVE MEMBERS</div>
 <div id="members"><p class="no-live">Checking for live members...</p></div>
-    
 <script>
 const rz7Members = ["mack_gaming", "vegtamyron", "thalapathy-ftw", "nokiya_w","thegod","wipzy_og","jjlit","pranavsettan","rz7-rinu","charanw","rz7-khalid","fatboygaming77"]; 
 const membersDiv = document.getElementById('members');
@@ -126,7 +63,7 @@ async function checkLive() {
     
     for (const username of rz7Members) {
         try {
-            // KEY FIX: PROXY ADD CHEYYU
+            // IVDE ANU KEY FIX
             const proxyUrl = 'https://api.allorigins.win/get?url=';
             const kickUrl = `https://kick.com/api/v2/channels/${username}`;
             const res = await fetch(proxyUrl + encodeURIComponent(kickUrl));
@@ -135,7 +72,7 @@ async function checkLive() {
             
             if(data.livestream){
                 liveCount++;
-                const cardHTML = `
+                membersDiv.innerHTML += `
                 <div class="member-card">
                     <div class="thumbnail">
                         <div class="live-badge">LIVE</div>
@@ -147,13 +84,9 @@ async function checkLive() {
                         <p>${data.livestream.session_title}</p>
                         <a href="https://kick.com/${username}" target="_blank">Watch on Kick →</a>
                     </div>
-                </div>
-                `;
-                membersDiv.innerHTML += cardHTML;
+                </div>`;
             }
-        } catch (e) {
-            console.log(username + " error:", e);
-        }
+        } catch (e) {}
     }
     
     if(liveCount > 0){
@@ -165,10 +98,8 @@ async function checkLive() {
         membersDiv.innerHTML = '<p class="no-live">No RZ7 members live right now 😢<br>Check back later!</p>';
     }
 }
-
 checkLive();
 setInterval(checkLive, 20000);
 </script>
-
 </body>
 </html>
